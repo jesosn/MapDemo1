@@ -2,6 +2,8 @@ package com.example.administrator.mapdemo1;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
@@ -11,7 +13,14 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiCitySearchOption;
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -29,8 +38,23 @@ public class MainActivity extends Activity {
         mMapView = (MapView) findViewById(R.id.bmapView);
         baiduMap = mMapView.getMap();
         baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-        baiduMap.setTrafficEnabled(true);
+//        baiduMap.setTrafficEnabled(true);
         poiSearch = PoiSearch.newInstance();
+
+        OnGetPoiSearchResultListener poiListener = new OnGetPoiSearchResultListener(){
+            public void onGetPoiResult(PoiResult result){
+                //获取POI检索结果
+                List<PoiInfo> poiInfos = result.getAllPoi();
+                for (int i = 0; i < poiInfos.size(); i++) {
+                    Toast.makeText(MainActivity.this,poiInfos.get(i).name + poiInfos.get(i).address,Toast.LENGTH_SHORT).show();
+                }
+            }
+            public void onGetPoiDetailResult(PoiDetailResult result){
+                //获取Place详情页检索结果
+            }
+        };
+        poiSearch.setOnGetPoiSearchResultListener(poiListener);
+
 
 
         //定义Maker坐标点
@@ -45,11 +69,22 @@ public class MainActivity extends Activity {
 //在地图上添加Marker，并显示
         baiduMap.addOverlay(option);
     }
+
+    public void button_poi_click(View view) {
+        poiSearch.searchInCity((new PoiCitySearchOption())
+                .city("南京")
+                .keyword("美食")
+                .pageNum(5));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        poiSearch.destroy();
+
         mMapView.onDestroy();
+
     }
     @Override
     protected void onResume() {
