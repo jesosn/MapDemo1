@@ -22,10 +22,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile files('libs/baidumapapi_base_v3_7_3.jar')
-    compile files('libs/baidumapapi_cloud_v3_7_3.jar')
-    compile files('libs/baidumapapi_map_v3_7_3.jar')
-    compile files('libs/baidumapapi_radar_v3_7_3.jar')
-    compile files('libs/baidumapapi_search_v3_7_3.jar')
-    compile files('libs/baidumapapi_util_v3_7_3.jar')
+    compile files('libs/BaiduLBS_Android.jar')
 }
+
